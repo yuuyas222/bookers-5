@@ -1,0 +1,96 @@
+<% if flash[:notice] %>
+    <%= flash[:notice] %>
+<% end %>  
+
+<%= render "users/templet" %>
+
+
+<div class ="col-xs-9">
+
+    <table class = "table">
+    <thead>
+        <h2>Book detail</h2>
+    </thead>        
+         <tbody>
+         
+            <td>
+                <%= attachment_image_tag @user, :profile_image, size: "40x40", fallback: "no_image.jpg"%><br>
+                <%= link_to @user.name, user_path(@user.id), class: "link" %>
+            </td>   
+            <td>
+                <%= link_to @bookcreate.title, book_path(@bookcreate.id), class: "link" %>
+            </td>
+            <td>
+                <%= @bookcreate.body %>
+            </td>
+        <% if @bookcreate.user == current_user %> 
+           <td> 
+            <%= link_to edit_book_path(@bookcreate.id) do %>
+                <button type="button" class="btn btn-success active">Edit</button>
+            <% end %>
+           </td>
+           <td> 
+            <%= link_to book_path(@bookcreate.id), method: :delete do %>
+                <button type="button" class="btn btn-danger active">Destroy</button>
+            <% end %>
+           </td>
+        <% end %>
+           <td>
+            <% if @bookcreate.favorited_by?(current_user) %>
+                <%= link_to book_favorites_path(@bookcreate), method: :delete, class: "font" do %>
+                    <i class="glyphicon glyphicon-heart" aria-hidden="true" style="color: block;"></i>  
+                    <%= @bookcreate.favorites.count %> 
+                <% end %>
+            <% else %>
+            <%= link_to book_favorites_path(@bookcreate), method: :post, class: "font" do %>
+                <i class="glyphicon glyphicon-heart-empty" aria-hidden="true"  ></i>  
+                <%= @bookcreate.favorites.count %>
+                <% end %>      
+            <% end %>
+           </td>
+           <td>
+              <span>コメント数：　<%= @bookcreate.book_comments.count %></span>
+           </td>
+          
+          
+         </tbody>   
+    </table>
+
+    <table class = "table">
+    
+    <% @bookcreate.book_comments.each do |bookcreate| %> 
+        <tr>
+        <td class = "com col-xs-2">
+        <%= attachment_image_tag bookcreate.user, :profile_image, size: "40x40", fallback: "no_image.jpg"%><br>
+        <%= link_to bookcreate.user.name, user_path(@user.id), class: "link" %>
+        </td>
+        <td>
+        <%= bookcreate.comment %>   
+        </td>
+        <td>
+        <% if bookcreate.user_id == current_user.id %>
+            <%= link_to "delete", book_book_comment_path(bookcreate.book_id, bookcreate), method: :delete, class: "btn btn-danger pull-right" %>
+        <% end %>
+        <td>
+        </tr>
+    <% end %> 
+     
+    </table>
+
+    <div class = "comment">
+      <%= form_for [@bookcreate,@book_comment] do |f| %>
+        <div class = "col-xs-9">
+            <%= f.text_area :comment, class: "col-xs-12 comment_heigth" %>
+        </div>
+        <div class = "col-xs-3">
+            <%= f.submit "送信" %>
+        </div>
+      <% end %>
+    </div>
+
+
+ </div> 
+</div>
+
+
+
